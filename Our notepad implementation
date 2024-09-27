@@ -1,0 +1,130 @@
+// Package declaration for the Notepad application
+package notepadapp;
+
+// Import necessary classes for GUI components
+import java.awt.Font;
+// Import necessary classes for GUI components
+import javax.swing.*;
+// Import necessary classes for event handling
+import java.awt.event.*;
+// Import necessary classes for printing
+import java.awt.print.PrinterException;
+// Import necessary classes for file input/output
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+// Import necessary classes for logging
+import java.util.logging.Level;
+import java.util.logging.Logger;
+// Import necessary classes for file chooser
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+// The main class for the Notepad application
+public class NotepadApp extends JFrame implements ActionListener {
+
+    // Create menu bar
+    JMenuBar menubar = new JMenuBar();
+    // Create "File" menu
+    JMenu file = new JMenu("File");
+    // Create "Edit" menu
+    JMenu edit = new JMenu("Edit");
+    // Create "Help" menu
+    JMenu help = new JMenu("Help");
+
+    // Create "New" menu item
+    JMenuItem newFile = new JMenuItem("New");
+    // Create "Open" menu item
+    JMenuItem openFile = new JMenuItem("Open");
+    // Create "Save" menu item
+    JMenuItem saveFile = new JMenuItem("Save");
+    // Create "Print" menu item
+    JMenuItem print = new JMenuItem("Print");
+    // Create "Exit" menu item
+    JMenuItem exit = new JMenuItem("Exit");
+
+    // Create "Cut" menu item
+    JMenuItem cut = new JMenuItem("Cut");
+    // Create "Copy" menu item
+    JMenuItem copy = new JMenuItem("Copy");
+    // Create "Paste" menu item
+    JMenuItem paste = new JMenuItem("Paste");
+    // Create "Select All" menu item
+    JMenuItem selectall = new JMenuItem("Select All");
+    // Create "About" menu item
+    JMenuItem about = new JMenuItem("About");
+
+    // Create text area for editing
+    JTextArea textArea = new JTextArea();
+
+    // Constructor for NotepadApp
+    NotepadApp() {
+        // Set title of the application
+        setTitle("Notepad Application");
+        // Set bounds of the application window
+        setBounds(100, 100, 800, 600);
+        // Set default close operation
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Set icon image for the application
+        ImageIcon icon = new ImageIcon(getClass().getResource("Notepad_clipart.png"));
+        setIconImage(icon.getImage());
+
+        // Set menu bar
+        setJMenuBar(menubar);
+
+        // Add "File" menu to menu bar
+        menubar.add(file);
+        // Add "Edit" menu to menu bar
+        menubar.add(edit);
+        // Add "Help" menu to menu bar
+        menubar.add(help);
+
+        // Add "New" menu item to "File" menu
+        file.add(newFile);
+        // Add "Open" menu item to "File" menu
+        file.add(openFile);
+        // Add "Save" menu item to "File" menu
+        file.add(saveFile);
+        // Add "Print" menu item to "File" menu
+        file.add(print);
+        // Add "Exit" menu item to "File" menu
+        file.add(exit);
+
+        // Add "Cut" menu item to "Edit" menu
+        edit.add(cut);
+        // Add "Copy" menu item to "Edit" menu
+        edit.add(copy);
+        // Add "Paste" menu item to "Edit" menu
+        edit.add(paste);
+        // Add "Select All" menu item to "Edit" menu
+        edit.add(selectall);
+
+        // Add "About" menu item to "Help" menu
+        help.add(about);
+
+        // Create scroll pane and add text area to it
+        JScrollPane scrollpane = new JScrollPane(textArea);
+        // Add scroll pane to the application window
+        add(scrollpane);
+        // Set horizontal scroll bar policy
+        scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        // Set vertical scroll bar policy
+        scrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        // Set border for scroll pane
+        scrollpane.setBorder(BorderFactory.createEmptyBorder());
+
+        // Set font for text area
+        textArea.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+        // Set line wrap for text area
+        textArea.setLineWrap(true);
+        // Set wrap style for text area
+        textArea.setWrapStyleWord(true);
+
+        // Add action listener to "New" menu item
+        newFile.addActionListener(this);
+        // Add action listener to "Open" menu item
+        openFile.addActionListener(this);
+        // Add action listener to "Save" menu item
+        saveFile.addActionListener(this
