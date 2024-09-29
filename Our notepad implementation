@@ -61,7 +61,7 @@ public class NotepadApp extends JFrame implements ActionListener {
     // Constructor for NotepadApp
     NotepadApp() {
         // Set title of the application
-        setTitle("Notepad Application");
+        setTitle("Jotter");               
         // Set bounds of the application window
         setBounds(100, 100, 800, 600);
         // Set default close operation
@@ -123,8 +123,113 @@ public class NotepadApp extends JFrame implements ActionListener {
         textArea.setWrapStyleWord(true);
 
         // Add action listener to "New" menu item
-        newFile.addActionListener(this);
-        // Add action listener to "Open" menu item
-        openFile.addActionListener(this);
-        // Add action listener to "Save" menu item
-        saveFile.addActionListener(this
+newFile.addActionListener(this);
+// Add action listener to "Open" menu item
+openFile.addActionListener(this);
+// Add action listener to "Save" menu item
+saveFile.addActionListener(this);
+// Add action listener to "Print" menu item
+print.addActionListener(this);
+// Add action listener to "Exit" menu item
+exit.addActionListener(this);
+// Add action listener to "Cut" menu item
+cut.addActionListener(this);
+// Add action listener to "Copy" menu item
+copy.addActionListener(this);
+// Add action listener to "Paste" menu item
+paste.addActionListener(this);
+// Add action listener to "Select All" menu item
+selectall.addActionListener(this);
+// Add action listener to "About" menu item
+about.addActionListener(this);
+
+// Set accelerator for "New" menu item (Ctrl+N)
+newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));
+// Set accelerator for "Open" menu item (Ctrl+O)
+openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
+// Set accelerator for "Save" menu item (Ctrl+S)
+saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+// Set accelerator for "Print" menu item (Ctrl+P)
+print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
+// Set accelerator for "Exit" menu item (Ctrl+W)
+exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK));
+// Set accelerator for "Cut" menu item (Ctrl+X)
+cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK));
+// Set accelerator for "Copy" menu item (Ctrl+C)
+copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK));
+// Set accelerator for "Paste" menu item (Ctrl+V)
+paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK));
+// Set accelerator for "Select All" menu item (Ctrl+A)
+selectall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
+// Set accelerator for "About" menu item (Ctrl+J)
+about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.CTRL_DOWN_MASK));
+}
+
+// Action performed method for menu items
+@Override
+public void actionPerformed(ActionEvent e) {
+    // Check if "New" menu item is clicked
+    if (e.getActionCommand().equalsIgnoreCase("New")) {
+        // Clear text area
+        textArea.setText(null);
+    } 
+    // Check if "Open" menu item is clicked
+    else if (e.getActionCommand().equalsIgnoreCase("Open")) {
+        // Create file chooser
+        JFileChooser fileChooser = new JFileChooser();
+        // Create file filter for text files
+        FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Only Text Files(.txt)", "txt");
+        // Set file filter
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.addChoosableFileFilter(textFilter);
+
+        // Show open dialog
+        int action = fileChooser.showOpenDialog(null);
+        // Check if file is selected
+        if (action != JFileChooser.APPROVE_OPTION) {
+            return;
+        } else {
+            try {
+                // Create file reader
+                BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()));
+                // Read file into text area
+                textArea.read(reader, null);
+            } catch (IOException ex) {
+                // Log error
+                Logger.getLogger(NotepadApp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    } 
+    // Check if "Save" menu item is clicked
+    else if (e.getActionCommand().equalsIgnoreCase("Save")) {
+        // Create file chooser
+        JFileChooser fileChooser = new JFileChooser();
+        // Create file filter for text files
+        FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Only Text Files(.txt)", "txt");
+        // Set file filter
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.addChoosableFileFilter(textFilter);
+
+        // Show save dialog
+        int action = fileChooser.showSaveDialog(null);
+        // Check if file is selected
+        if (action != JFileChooser.APPROVE_OPTION) {
+            return;
+        } else {
+            // Get selected file name
+            String fileName = fileChooser.getSelectedFile().getAbsolutePath().toString();
+            // Check if file name has .txt extension
+            if (!fileName.contains(".txt")) {
+                fileName += ".txt";
+            }
+
+            try {
+                // Create file writer
+                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+                // Write text area to file
+                textArea.write(writer);
+            } catch (IOException ex) {
+                // Log error
+                Logger.getLogger(NotepadApp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+       
