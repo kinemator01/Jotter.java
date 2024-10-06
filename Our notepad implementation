@@ -1,130 +1,286 @@
-// Package declaration for the Notepad application
-package notepadapp;
+package jotterapplication;
 
-// Import necessary classes for GUI components
 import java.awt.Font;
-// Import necessary classes for GUI components
-import javax.swing.*;
-// Import necessary classes for event handling
-import java.awt.event.*;
-// Import necessary classes for printing
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.print.PrinterException;
-// Import necessary classes for file input/output
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-// Import necessary classes for logging
 import java.util.logging.Level;
 import java.util.logging.Logger;
-// Import necessary classes for file chooser
+import javax.swing.JFrame;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-// The main class for the Notepad application
-public class NotepadApp extends JFrame implements ActionListener {
+public class JotterApplication extends JFrame implements ActionListener {
+    //Menu for Jotter
+     JMenuBar menu = new JMenuBar();
+     JMenu file = new JMenu("File");
+     JMenu edit = new JMenu("Edit");
+     JMenu view = new JMenu("View");
+     JMenu format = new JMenu("Text Format");
+     JMenu insert = new JMenu("Insert Image");
+     
+     //File menu
+     JMenuItem newFile = new JMenuItem("New");
+     JMenuItem openFile = new JMenuItem("Open");
+     JMenuItem saveFile = new JMenuItem("Save");
+     JMenuItem newwindowFile = new JMenuItem("New Window");
+     JMenuItem print = new JMenuItem("Print");
+     JMenuItem exit = new JMenuItem("Exit");
+     
+     //Edit menu
+     JMenuItem cut = new JMenuItem("Cut");
+     JMenuItem copy = new JMenuItem("Copy");
+     JMenuItem paste = new JMenuItem("Paste");
+     JMenuItem delete = new JMenuItem("Delete");
+     JMenuItem selectall = new JMenuItem("Select All");
+     
+     //View menu
+     JMenuItem statusbar = new JMenuItem("Status Bar");
+    
+     //Text menu
+     JMenu fontFamilyMenu = new JMenu("Family");
+     JMenu fontStyleMenu = new JMenu("Style");
+     JMenu fontSizeMenu = new JMenu("Size");
 
-    // Create menu bar
-    JMenuBar menubar = new JMenuBar();
-    // Create "File" menu
-    JMenu file = new JMenu("File");
-    // Create "Edit" menu
-    JMenu edit = new JMenu("Edit");
-    // Create "Help" menu
-    JMenu help = new JMenu("Help");
+     //Font families
+     JMenuItem helvetica = new JMenuItem("Helvetica");
+     JMenuItem calibri = new JMenuItem("Calibri");
+     JMenuItem timesNewRoman = new JMenuItem("Times New Roman");
+     JMenuItem arial = new JMenuItem("Arial");
+     JMenuItem bold = new JMenuItem("Bold");
+     JMenuItem italic = new JMenuItem("Italic");
+     JMenuItem size10 = new JMenuItem("10");
+     JMenuItem size12 = new JMenuItem("12");
+     JMenuItem size14 = new JMenuItem("14");
+     JMenuItem size16 = new JMenuItem("16");
+     JMenuItem size18 = new JMenuItem("18");
+     JMenuItem size20 = new JMenuItem("20");
+     //Image Insertion menu
+     JMenuItem imageInsert = new JMenuItem("Insert Image");
+     
+     JTextArea textArea = new JTextArea();
 
-    // Create "New" menu item
-    JMenuItem newFile = new JMenuItem("New");
-    // Create "Open" menu item
-    JMenuItem openFile = new JMenuItem("Open");
-    // Create "Save" menu item
-    JMenuItem saveFile = new JMenuItem("Save");
-    // Create "Print" menu item
-    JMenuItem print = new JMenuItem("Print");
-    // Create "Exit" menu item
-    JMenuItem exit = new JMenuItem("Exit");
-
-    // Create "Cut" menu item
-    JMenuItem cut = new JMenuItem("Cut");
-    // Create "Copy" menu item
-    JMenuItem copy = new JMenuItem("Copy");
-    // Create "Paste" menu item
-    JMenuItem paste = new JMenuItem("Paste");
-    // Create "Select All" menu item
-    JMenuItem selectall = new JMenuItem("Select All");
-    // Create "About" menu item
-    JMenuItem about = new JMenuItem("About");
-
-    // Create text area for editing
-    JTextArea textArea = new JTextArea();
-
-    // Constructor for NotepadApp
-    NotepadApp() {
-        // Set title of the application
-        setTitle("Notepad Application");
-        // Set bounds of the application window
-        setBounds(100, 100, 800, 600);
-        // Set default close operation
+     // Constructor for Jotter
+     JotterApplication(){
+        setTitle("JOTTER");
+        setBounds(100,100,800,600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Set icon image for the application
-        ImageIcon icon = new ImageIcon(getClass().getResource("Notepad_clipart.png"));
-        setIconImage(icon.getImage());
-
-        // Set menu bar
-        setJMenuBar(menubar);
-
-        // Add "File" menu to menu bar
-        menubar.add(file);
-        // Add "Edit" menu to menu bar
-        menubar.add(edit);
-        // Add "Help" menu to menu bar
-        menubar.add(help);
-
-        // Add "New" menu item to "File" menu
+        ImageIcon jotterLogo = new ImageIcon(getClass().getResource("Jotter.jpg"));
+        setIconImage(jotterLogo.getImage());
+        
+        setJMenuBar(menu);
+             
+        menu.add(file);
+        menu.add(edit);
+        menu.add(view);
+        menu.add(format);
+        menu.add(insert);
+        
+        //File menu options
         file.add(newFile);
-        // Add "Open" menu item to "File" menu
         file.add(openFile);
-        // Add "Save" menu item to "File" menu
         file.add(saveFile);
-        // Add "Print" menu item to "File" menu
+        file.add(newwindowFile);
         file.add(print);
-        // Add "Exit" menu item to "File" menu
         file.add(exit);
-
-        // Add "Cut" menu item to "Edit" menu
+        
+        //Edit menu options
         edit.add(cut);
-        // Add "Copy" menu item to "Edit" menu
         edit.add(copy);
-        // Add "Paste" menu item to "Edit" menu
         edit.add(paste);
-        // Add "Select All" menu item to "Edit" menu
+        edit.add(delete);
         edit.add(selectall);
-
-        // Add "About" menu item to "Help" menu
-        help.add(about);
-
-        // Create scroll pane and add text area to it
+        
+        //View menu option
+        view.add(statusbar);
+        
+        //Format menu options
+        format.add(fontFamilyMenu);
+        format.add(fontStyleMenu);
+        format.add(fontSizeMenu);
+        fontFamilyMenu.add(helvetica);
+        fontFamilyMenu.add(calibri);
+        fontFamilyMenu.add(timesNewRoman);
+        fontFamilyMenu.add(arial);
+        fontStyleMenu.add(bold);
+        fontStyleMenu.add(italic);
+        fontSizeMenu.add(size10);
+        fontSizeMenu.add(size12);
+        fontSizeMenu.add(size14);
+        fontSizeMenu.add(size16);
+        fontSizeMenu.add(size18);
+        fontSizeMenu.add(size20);
+        
+        //Image Insertion menu option
+        insert.add(imageInsert);
+        
+        //Text Area writing 
         JScrollPane scrollpane = new JScrollPane(textArea);
-        // Add scroll pane to the application window
         add(scrollpane);
-        // Set horizontal scroll bar policy
         scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        // Set vertical scroll bar policy
         scrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        // Set border for scroll pane
         scrollpane.setBorder(BorderFactory.createEmptyBorder());
-
-        // Set font for text area
-        textArea.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
-        // Set line wrap for text area
+        textArea.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
         textArea.setLineWrap(true);
-        // Set wrap style for text area
         textArea.setWrapStyleWord(true);
-
-        // Add action listener to "New" menu item
+        
         newFile.addActionListener(this);
-        // Add action listener to "Open" menu item
         openFile.addActionListener(this);
-        // Add action listener to "Save" menu item
-        saveFile.addActionListener(this
+        saveFile.addActionListener(this);
+        newwindowFile.addActionListener(this);
+        print.addActionListener(this);
+        exit.addActionListener(this);
+        cut.addActionListener(this);
+        copy.addActionListener(this);
+        paste.addActionListener(this);
+        delete.addActionListener(this);
+        selectall.addActionListener(this);
+        helvetica.addActionListener(this);
+        calibri.addActionListener(this);
+        timesNewRoman.addActionListener(this);
+        arial.addActionListener(this);
+        bold.addActionListener(this);
+        italic.addActionListener(this);
+        size10.addActionListener(this);
+        size12.addActionListener(this);
+        size14.addActionListener(this);
+        size16.addActionListener(this);
+        size18.addActionListener(this);
+        size20.addActionListener(this);
+          
+        //Keyword shortcuts
+        newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_DOWN_MASK));
+        openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_DOWN_MASK));
+        saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK));
+        newwindowFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_DOWN_MASK));
+        print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_DOWN_MASK));
+        exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,KeyEvent.CTRL_DOWN_MASK));
+        cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_DOWN_MASK));
+        copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_DOWN_MASK));
+        paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_DOWN_MASK));
+        delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,KeyEvent.CTRL_DOWN_MASK));
+        selectall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,KeyEvent.CTRL_DOWN_MASK));
+    }
+    @Override
+     public void actionPerformed(ActionEvent e){
+         //File management
+         if(e.getActionCommand().equalsIgnoreCase("New")){
+            textArea.setText(null);
+        }else if(e.getActionCommand().equalsIgnoreCase("Open")){
+            JFileChooser fileChooser=new JFileChooser();
+            FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Only Text Files(.txt)","txt");
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.addChoosableFileFilter(textFilter);
+             int action=fileChooser.showOpenDialog(null);
+            if(action!=JFileChooser.APPROVE_OPTION){
+            }else{
+                try {
+                     BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()));
+                    textArea.read(reader,null);
+                } catch (IOException ex) {
+                    Logger.getLogger(JotterApplication.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                 }
+            
+        }else if(e.getActionCommand().equalsIgnoreCase("Save")){
+            //Saving file
+            JFileChooser fileChooser=new JFileChooser();
+            FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Only Text Files(.txt)","txt");
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.addChoosableFileFilter(textFilter);
+            
+            int action=fileChooser.showSaveDialog(null);
+            if(action!=JFileChooser.APPROVE_OPTION){
+            }else{
+                String fileName=fileChooser.getSelectedFile().getAbsolutePath();
+                if(fileName.contains(".txt"))
+                    fileName=fileName+".txt";
+                
+                try {
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+                    textArea.write(writer);
+                } catch (IOException ex) {
+                    Logger.getLogger(JotterApplication.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }else if(e.getActionCommand().equalsIgnoreCase("New Window")){
+            //Creating a new window
+            JFrame newWindow = new JFrame("New Window");
+            newWindow.setSize(350, 350);
+            newWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JTextArea newTextArea = new JTextArea();
+            JScrollPane newScrollPane = new JScrollPane(newTextArea);
+            newWindow.add(newScrollPane);
+            newWindow.setVisible(true);
+        }else if(e.getActionCommand().equalsIgnoreCase("Print")){
+            try {
+                //Printing txt file
+                textArea.print();
+            } catch (PrinterException ex) {
+                Logger.getLogger(JotterApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else if(e.getActionCommand().equalsIgnoreCase("Exit")){
+            System.exit(0);
+        }else if(e.getActionCommand().equalsIgnoreCase("Cut")){
+            textArea.cut();
+        }else if(e.getActionCommand().equalsIgnoreCase("Copy")){
+            textArea.copy();
+        }else if(e.getActionCommand().equalsIgnoreCase("Delete")){
+            //Delete text
+            int start = textArea.getSelectionStart();
+            int end = textArea.getSelectionEnd();
+            if (start != end) { 
+            textArea.replaceRange("", start, end);
+        }}else if(e.getActionCommand().equalsIgnoreCase("Paste")){
+            textArea.paste();
+        }else if(e.getActionCommand().equalsIgnoreCase("Select All")){
+            textArea.selectAll();
+        }else if (e.getActionCommand().equals("Helvetica")) {
+            textArea.setFont(new Font("Helvetica", Font.PLAIN, textArea.getFont().getSize()));
+        }else if (e.getActionCommand().equals("Calibri")) {
+            textArea.setFont(new Font("Calibri", Font.PLAIN, textArea.getFont().getSize()));
+        }else if (e.getActionCommand().equals("Times New Roman")) {
+            textArea.setFont(new Font("Times New Roman", Font.PLAIN, textArea.getFont().getSize()));
+        }else if (e.getActionCommand().equals("Arial")) {
+            textArea.setFont(new Font("Arial", Font.PLAIN, textArea.getFont().getSize()));
+        }else if (e.getActionCommand().equals("Bold")) {
+            Font currentFont = textArea.getFont();
+            if (currentFont.isBold()) {
+                textArea.setFont(currentFont.deriveFont(currentFont.getStyle() & ~Font.BOLD));
+            } else {
+                textArea.setFont(currentFont.deriveFont(currentFont.getStyle() | Font.BOLD));
+            }
+        }else if (e.getActionCommand().equals("Italic")) {
+           Font currentFont = textArea.getFont();
+            if (currentFont.isItalic()) {
+                textArea.setFont(currentFont.deriveFont(currentFont.getStyle() & ~Font.ITALIC));
+            } else {
+                textArea.setFont(currentFont.deriveFont(currentFont.getStyle() | Font.ITALIC));
+            }
+        }else if (e.getActionCommand().equals("10")) {
+        textArea.setFont(textArea.getFont().deriveFont(10f));
+        } else if (e.getActionCommand().equals("12")) {
+            textArea.setFont(textArea.getFont().deriveFont(12f));
+        } else if (e.getActionCommand().equals("14")) {
+            textArea.setFont(textArea.getFont().deriveFont(14f));
+        } else if (e.getActionCommand().equals("16")) {
+            textArea.setFont(textArea.getFont().deriveFont(16f));
+        } else if (e.getActionCommand().equals("18")) {
+            textArea.setFont(textArea.getFont().deriveFont(18f));
+        } else if (e.getActionCommand().equals("20")) {
+            textArea.setFont(textArea.getFont().deriveFont(20f));
+        }
+     }
+    public static void main(String[] args) throws Exception {
+     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        new JotterApplication().setVisible(true);
+    }
+    
+
+}
