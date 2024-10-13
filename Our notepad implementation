@@ -65,6 +65,7 @@ public class JotterApplication extends JFrame implements ActionListener {
      JMenuItem imageInsert = new JMenuItem("Insert Image");
      
      JTextArea textArea = new JTextArea();
+     JotterApplication newWindow;
 
      // Constructor for Jotter
      JotterApplication(){
@@ -211,13 +212,8 @@ public class JotterApplication extends JFrame implements ActionListener {
             }
         }else if(e.getActionCommand().equalsIgnoreCase("New Window")){
             //Creating a new window
-            JFrame newWindow = new JFrame("New Window");
-            newWindow.setSize(350, 350);
-            newWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            JTextArea newTextArea = new JTextArea();
-            JScrollPane newScrollPane = new JScrollPane(newTextArea);
-            newWindow.add(newScrollPane);
-            newWindow.setVisible(true);
+             newWindow = new JotterApplication();
+             newWindow.setVisible(true);
         }else if(e.getActionCommand().equalsIgnoreCase("Print")){
             try {
                 //Printing txt file
