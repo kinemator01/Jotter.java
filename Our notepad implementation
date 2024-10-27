@@ -1,10 +1,10 @@
 package jotterapplication;
 
+import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.print.PrinterException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -15,6 +15,10 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.Color;
+import java.awt.print.PrinterException;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
 
 public class JotterApplication extends JFrame implements ActionListener {
     //Menu for Jotter
@@ -24,6 +28,7 @@ public class JotterApplication extends JFrame implements ActionListener {
      JMenu view = new JMenu("View");
      JMenu format = new JMenu("Text Format");
      JMenu insert = new JMenu("Insert Image");
+     JMenu search = new JMenu("Search");
      
      //File menu
      JMenuItem newFile = new JMenuItem("New");
@@ -64,16 +69,26 @@ public class JotterApplication extends JFrame implements ActionListener {
      //Image Insertion menu
      JMenuItem imageInsert = new JMenuItem("Insert Image");
      
+     
+     //Search function components declaration//
+     	JTextField searchField = new JTextField(20);
+	JButton searchButton = new JButton("Search");
+	JLabel searchResultLabel = new JLabel("");
+
+     
      JTextArea textArea = new JTextArea();
-     JotterApplication newWindow;
 
      // Constructor for Jotter
      JotterApplication(){
         setTitle("JOTTER");
         setBounds(100,100,800,600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ImageIcon jotterLogo = new ImageIcon(getClass().getResource("Jotter.jpg"));
-        setIconImage(jotterLogo.getImage());
+       
+        // Create an ImageIcon object with the path to the new JPG icon
+ImageIcon jotterLogo = new ImageIcon("C:\\Users\\banel\\OneDrive\\Documents\\New Jotter Icon.jpg");
+
+// Set the application's icon image to the new icon
+setIconImage(jotterLogo.getImage());
         
         setJMenuBar(menu);
              
@@ -142,6 +157,16 @@ public class JotterApplication extends JFrame implements ActionListener {
         paste.addActionListener(this);
         delete.addActionListener(this);
         selectall.addActionListener(this);
+        
+        //Search function actionlistener initialization//
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchWord(); // Call the searchWord method here
+            }
+        });
+
+        
         helvetica.addActionListener(this);
         calibri.addActionListener(this);
         timesNewRoman.addActionListener(this);
@@ -167,6 +192,14 @@ public class JotterApplication extends JFrame implements ActionListener {
         paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_DOWN_MASK));
         delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,KeyEvent.CTRL_DOWN_MASK));
         selectall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,KeyEvent.CTRL_DOWN_MASK));
+        
+        //Search components initialization//
+        	JPanel searchPanel = new JPanel();
+	searchPanel.add(searchField);
+	searchPanel.add(searchButton);
+	searchPanel.add(searchResultLabel);
+	add(searchPanel, BorderLayout.NORTH); // Add the search panel to the top of the frame
+
     }
     @Override
      public void actionPerformed(ActionEvent e){
@@ -212,8 +245,13 @@ public class JotterApplication extends JFrame implements ActionListener {
             }
         }else if(e.getActionCommand().equalsIgnoreCase("New Window")){
             //Creating a new window
-             newWindow = new JotterApplication();
-             newWindow.setVisible(true);
+            JFrame newWindow = new JFrame("New Window");
+            newWindow.setSize(350, 350);
+            newWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JTextArea newTextArea = new JTextArea();
+            JScrollPane newScrollPane = new JScrollPane(newTextArea);
+            newWindow.add(newScrollPane);
+            newWindow.setVisible(true);
         }else if(e.getActionCommand().equalsIgnoreCase("Print")){
             try {
                 //Printing txt file
@@ -273,6 +311,49 @@ public class JotterApplication extends JFrame implements ActionListener {
             textArea.setFont(textArea.getFont().deriveFont(20f));
         }
      }
+     
+     //Now to finally create the searchWord function which we refer to as a method in java//
+     private void searchWord() {
+	    String searchTerm = searchField.getText().trim(); // Get the search term and trim whitespace
+	    String content = textArea.getText(); // Get the content from the text area
+	
+	    // Reset the search result label
+	    searchResultLabel.setText("");
+
+    if (searchTerm.isEmpty()) {
+        return; // Exit if the search term is empty
+    }
+          int count = 0;
+    int index = 0;
+
+    // Clear existing highlights
+    textArea.getHighlighter().removeAllHighlights();
+
+    // Search for the term in the text area content
+    while ((index = content.indexOf(searchTerm, index)) >= 0) {
+        try {
+            // Highlight the found term
+            textArea.getHighlighter().addHighlight(index, index + searchTerm.length(), 
+               new DefaultHighlighter.DefaultHighlightPainter(Color.BLUE));
+        } catch (BadLocationException e) {
+       }
+        count++;
+        index += searchTerm.length(); // Move index forward to continue searching
+    }
+
+    // Update the result label with the count of occurrences found
+    searchResultLabel.setText(count + " result(s) found for \"" + searchTerm + "\"");
+}
+
+
+     
+     
+     
+     
+     
+     
+     
+     
     public static void main(String[] args) throws Exception {
      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         new JotterApplication().setVisible(true);
@@ -280,3 +361,4 @@ public class JotterApplication extends JFrame implements ActionListener {
     
 
 }
+
