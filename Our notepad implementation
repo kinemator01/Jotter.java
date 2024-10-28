@@ -1,122 +1,105 @@
 package jotterapplication;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFrame;
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.*;
 import java.awt.print.PrinterException;
+import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.logging.*;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.StyledDocument;
 
 public class JotterApplication extends JFrame implements ActionListener {
-    //Menu for Jotter
-     JMenuBar menu = new JMenuBar();
-     JMenu file = new JMenu("File");
-     JMenu edit = new JMenu("Edit");
-     JMenu view = new JMenu("View");
-     JMenu format = new JMenu("Text Format");
-     JMenu insert = new JMenu("Insert Image");
-     JMenu search = new JMenu("Search");
-     
-     //File menu
-     JMenuItem newFile = new JMenuItem("New");
-     JMenuItem openFile = new JMenuItem("Open");
-     JMenuItem saveFile = new JMenuItem("Save");
-     JMenuItem newwindowFile = new JMenuItem("New Window");
-     JMenuItem print = new JMenuItem("Print");
-     JMenuItem exit = new JMenuItem("Exit");
-     
-     //Edit menu
-     JMenuItem cut = new JMenuItem("Cut");
-     JMenuItem copy = new JMenuItem("Copy");
-     JMenuItem paste = new JMenuItem("Paste");
-     JMenuItem delete = new JMenuItem("Delete");
-     JMenuItem selectall = new JMenuItem("Select All");
-     
-     //View menu
-     JMenuItem statusbar = new JMenuItem("Status Bar");
+    JMenuBar menu = new JMenuBar();
+    JMenu file = new JMenu("File");
+    JMenu edit = new JMenu("Edit");
+    JMenu view = new JMenu("View");
+    JMenu format = new JMenu("Text Format");
+    JMenu insert = new JMenu("Insert Image");
+    JMenu search = new JMenu("Search");
+
+    JMenuItem newFile = new JMenuItem("New");
+    JMenuItem openFile = new JMenuItem("Open");
+    JMenuItem saveFile = new JMenuItem("Save");
+    JMenuItem newWindow = new JMenuItem("New Window");
+    JMenuItem saveToCloud = new JMenuItem("Save to Cloud");
+    JMenuItem loadFromCloud = new JMenuItem("Load from Cloud");
+    JMenuItem print = new JMenuItem("Print");
+    JMenuItem exit = new JMenuItem("Exit");
+
+    JMenuItem cut = new JMenuItem("Cut");
+    JMenuItem copy = new JMenuItem("Copy");
+    JMenuItem paste = new JMenuItem("Paste");
+    JMenuItem delete = new JMenuItem("Delete");
+    JMenuItem selectAll = new JMenuItem("Select All");
     
-     //Text menu
-     JMenu fontFamilyMenu = new JMenu("Family");
-     JMenu fontStyleMenu = new JMenu("Style");
-     JMenu fontSizeMenu = new JMenu("Size");
+    //Text menu
+    JMenu fontFamilyMenu = new JMenu("Family");
+    JMenu fontStyleMenu = new JMenu("Style");
+    JMenu fontSizeMenu = new JMenu("Size");
 
-     //Font families
-     JMenuItem helvetica = new JMenuItem("Helvetica");
-     JMenuItem calibri = new JMenuItem("Calibri");
-     JMenuItem timesNewRoman = new JMenuItem("Times New Roman");
-     JMenuItem arial = new JMenuItem("Arial");
-     JMenuItem bold = new JMenuItem("Bold");
-     JMenuItem italic = new JMenuItem("Italic");
-     JMenuItem size10 = new JMenuItem("10");
-     JMenuItem size12 = new JMenuItem("12");
-     JMenuItem size14 = new JMenuItem("14");
-     JMenuItem size16 = new JMenuItem("16");
-     JMenuItem size18 = new JMenuItem("18");
-     JMenuItem size20 = new JMenuItem("20");
-     //Image Insertion menu
-     JMenuItem imageInsert = new JMenuItem("Insert Image");
-     
-     
-     //Search function components declaration//
-     	JTextField searchField = new JTextField(20);
-	JButton searchButton = new JButton("Search");
-	JLabel searchResultLabel = new JLabel("");
+    //Font families
+    JMenuItem helvetica = new JMenuItem("Helvetica");
+    JMenuItem calibri = new JMenuItem("Calibri");
+    JMenuItem timesNewRoman = new JMenuItem("Times New Roman");
+    JMenuItem arial = new JMenuItem("Arial");
+    JMenuItem bold = new JMenuItem("Bold");
+    JMenuItem italic = new JMenuItem("Italic");
+    JMenuItem size10 = new JMenuItem("10");
+    JMenuItem size12 = new JMenuItem("12");
+    JMenuItem size14 = new JMenuItem("14");
+    JMenuItem size16 = new JMenuItem("16");
+    JMenuItem size18 = new JMenuItem("18");
+    JMenuItem size20 = new JMenuItem("20");
 
-     
-     JTextArea textArea = new JTextArea();
+    JMenuItem imageInsert = new JMenuItem("Insert Image");
+    //Search function components declaration//
+     JTextField searchField = new JTextField(20);
+     JButton searchButton = new JButton("Search");
+     JLabel searchResultLabel = new JLabel("");
+    JTextPane textPane = new JTextPane();
+    JLabel statusBar = new JLabel("Words: 0 | Characters: 0");
+    
+    // MySQL Database info
+    private final String DB_URL = "jdbc:mysql://localhost:3306/jotterapp?zeroDateTimeBehavior=CONVERT_TO_NULL";
+    private final String DB_USER = "root";
+    private final String DB_PASSWORD = "Khuphuka2004Bosvark";
 
-     // Constructor for Jotter
-     JotterApplication(){
+    public JotterApplication() {
         setTitle("JOTTER");
-        setBounds(100,100,800,600);
+        setBounds(100, 100, 800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       
-        // Create an ImageIcon object with the path to the new JPG icon
-ImageIcon jotterLogo = new ImageIcon("C:\\Users\\banel\\OneDrive\\Documents\\New Jotter Icon.jpg");
+        ImageIcon jotterLogo = new ImageIcon("Jotter.jpg");
+        setIconImage(jotterLogo.getImage());
 
-// Set the application's icon image to the new icon
-setIconImage(jotterLogo.getImage());
-        
         setJMenuBar(menu);
-             
         menu.add(file);
         menu.add(edit);
         menu.add(view);
         menu.add(format);
         menu.add(insert);
-        
-        //File menu options
+
         file.add(newFile);
         file.add(openFile);
         file.add(saveFile);
-        file.add(newwindowFile);
+        file.add(saveToCloud);
+        file.add(loadFromCloud);
+        file.add(newWindow);
         file.add(print);
         file.add(exit);
-        
-        //Edit menu options
+
         edit.add(cut);
         edit.add(copy);
         edit.add(paste);
         edit.add(delete);
-        edit.add(selectall);
-        
-        //View menu option
-        view.add(statusbar);
-        
-        //Format menu options
+        edit.add(selectAll);
         format.add(fontFamilyMenu);
         format.add(fontStyleMenu);
         format.add(fontSizeMenu);
@@ -132,41 +115,35 @@ setIconImage(jotterLogo.getImage());
         fontSizeMenu.add(size16);
         fontSizeMenu.add(size18);
         fontSizeMenu.add(size20);
-        
-        //Image Insertion menu option
+
         insert.add(imageInsert);
-        
-        //Text Area writing 
-        JScrollPane scrollpane = new JScrollPane(textArea);
-        add(scrollpane);
-        scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollpane.setBorder(BorderFactory.createEmptyBorder());
-        textArea.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        
+
+        JScrollPane scrollPane = new JScrollPane(textPane);
+        add(scrollPane, "Center");
+        add(statusBar, "South");
+
+        textPane.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+
+        // Action Listeners
         newFile.addActionListener(this);
         openFile.addActionListener(this);
         saveFile.addActionListener(this);
-        newwindowFile.addActionListener(this);
+        newWindow.addActionListener(this);
         print.addActionListener(this);
         exit.addActionListener(this);
         cut.addActionListener(this);
         copy.addActionListener(this);
         paste.addActionListener(this);
         delete.addActionListener(this);
-        selectall.addActionListener(this);
-        
+        selectAll.addActionListener(this);
+        imageInsert.addActionListener(e -> insertImage());
         //Search function actionlistener initialization//
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                searchWord(); // Call the searchWord method here
+                searchWord();
             }
         });
-
-        
         helvetica.addActionListener(this);
         calibri.addActionListener(this);
         timesNewRoman.addActionListener(this);
@@ -179,143 +156,192 @@ setIconImage(jotterLogo.getImage());
         size16.addActionListener(this);
         size18.addActionListener(this);
         size20.addActionListener(this);
-          
+
         //Keyword shortcuts
         newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_DOWN_MASK));
         openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_DOWN_MASK));
         saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK));
-        newwindowFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_DOWN_MASK));
+        newWindow.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_DOWN_MASK));
         print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_DOWN_MASK));
         exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,KeyEvent.CTRL_DOWN_MASK));
         cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_DOWN_MASK));
         copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_DOWN_MASK));
         paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_DOWN_MASK));
         delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,KeyEvent.CTRL_DOWN_MASK));
-        selectall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,KeyEvent.CTRL_DOWN_MASK));
+        selectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,KeyEvent.CTRL_DOWN_MASK));
         
         //Search components initialization//
         	JPanel searchPanel = new JPanel();
 	searchPanel.add(searchField);
 	searchPanel.add(searchButton);
 	searchPanel.add(searchResultLabel);
-	add(searchPanel, BorderLayout.NORTH); // Add the search panel to the top of the frame
-
-    }
-    @Override
-     public void actionPerformed(ActionEvent e){
-         //File management
-         if(e.getActionCommand().equalsIgnoreCase("New")){
-            textArea.setText(null);
-        }else if(e.getActionCommand().equalsIgnoreCase("Open")){
-            JFileChooser fileChooser=new JFileChooser();
-            FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Only Text Files(.txt)","txt");
-            fileChooser.setAcceptAllFileFilterUsed(false);
-            fileChooser.addChoosableFileFilter(textFilter);
-             int action=fileChooser.showOpenDialog(null);
-            if(action!=JFileChooser.APPROVE_OPTION){
-            }else{
-                try {
-                     BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()));
-                    textArea.read(reader,null);
-                } catch (IOException ex) {
-                    Logger.getLogger(JotterApplication.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                 }
-            
-        }else if(e.getActionCommand().equalsIgnoreCase("Save")){
-            //Saving file
-            JFileChooser fileChooser=new JFileChooser();
-            FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Only Text Files(.txt)","txt");
-            fileChooser.setAcceptAllFileFilterUsed(false);
-            fileChooser.addChoosableFileFilter(textFilter);
-            
-            int action=fileChooser.showSaveDialog(null);
-            if(action!=JFileChooser.APPROVE_OPTION){
-            }else{
-                String fileName=fileChooser.getSelectedFile().getAbsolutePath();
-                if(fileName.contains(".txt"))
-                    fileName=fileName+".txt";
-                
-                try {
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-                    textArea.write(writer);
-                } catch (IOException ex) {
-                    Logger.getLogger(JotterApplication.class.getName()).log(Level.SEVERE, null, ex);
-                }
+	add(searchPanel, BorderLayout.NORTH);
+        textPane.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                updateWordAndCharacterCount();
             }
-        }else if(e.getActionCommand().equalsIgnoreCase("New Window")){
-            //Creating a new window
-            JFrame newWindow = new JFrame("New Window");
-            newWindow.setSize(350, 350);
-            newWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            JTextArea newTextArea = new JTextArea();
-            JScrollPane newScrollPane = new JScrollPane(newTextArea);
-            newWindow.add(newScrollPane);
-            newWindow.setVisible(true);
-        }else if(e.getActionCommand().equalsIgnoreCase("Print")){
+        });
+    }
+
+    private void insertImage() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setAcceptAllFileFilterUsed(true);
+
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String imagePath = fileChooser.getSelectedFile().getAbsolutePath();
             try {
-                //Printing txt file
-                textArea.print();
+                ImageIcon imageIcon = new ImageIcon(imagePath);
+                if (imageIcon.getIconWidth() == -1) {
+                    JOptionPane.showMessageDialog(this, "Invalid image file.", 
+                                                  "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    StyledDocument doc = textPane.getStyledDocument();
+                    textPane.setCaretPosition(doc.getLength());
+                    textPane.insertIcon(imageIcon);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error loading image: " + ex.getMessage(),
+                                              "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void updateWordAndCharacterCount() {
+        String text = textPane.getText();
+        int charCount = text.length();
+        int wordCount = text.trim().isEmpty() ? 0 : text.trim().split("\\s+").length;
+        statusBar.setText("Words: " + wordCount + " | Characters: " + charCount);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+        if (command.equalsIgnoreCase("New")) {
+            textPane.setText("");
+        } else if (command.equalsIgnoreCase("Open")) {
+            openFile();
+        } else if (command.equalsIgnoreCase("Save")) {
+            saveFile();
+        } else if (command.equalsIgnoreCase("Save to Cloud")) {
+            saveToCloud();
+        } else if (command.equalsIgnoreCase("Load from Cloud")) {
+            loadFromCloud();
+        } else if (command.equalsIgnoreCase("New Window")) {
+            new JotterApplication().setVisible(true);
+        } else if (command.equalsIgnoreCase("Print")) {
+            try {
+                textPane.print();
             } catch (PrinterException ex) {
                 Logger.getLogger(JotterApplication.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }else if(e.getActionCommand().equalsIgnoreCase("Exit")){
+        } else if (command.equalsIgnoreCase("Exit")) {
             System.exit(0);
-        }else if(e.getActionCommand().equalsIgnoreCase("Cut")){
-            textArea.cut();
-        }else if(e.getActionCommand().equalsIgnoreCase("Copy")){
-            textArea.copy();
-        }else if(e.getActionCommand().equalsIgnoreCase("Delete")){
-            //Delete text
-            int start = textArea.getSelectionStart();
-            int end = textArea.getSelectionEnd();
-            if (start != end) { 
-            textArea.replaceRange("", start, end);
-        }}else if(e.getActionCommand().equalsIgnoreCase("Paste")){
-            textArea.paste();
-        }else if(e.getActionCommand().equalsIgnoreCase("Select All")){
-            textArea.selectAll();
+        } else if (command.equalsIgnoreCase("Cut")) {
+            textPane.cut();
+        } else if (command.equalsIgnoreCase("Copy")) {
+            textPane.copy();
+        } else if (command.equalsIgnoreCase("Paste")) {
+            textPane.paste();
+        } else if (command.equalsIgnoreCase("Delete")) {
+            textPane.replaceSelection("");
+        } else if (command.equalsIgnoreCase("Select All")) {
+            textPane.selectAll();
         }else if (e.getActionCommand().equals("Helvetica")) {
-            textArea.setFont(new Font("Helvetica", Font.PLAIN, textArea.getFont().getSize()));
+            textPane.setFont(new Font("Helvetica", Font.PLAIN, textPane.getFont().getSize()));
         }else if (e.getActionCommand().equals("Calibri")) {
-            textArea.setFont(new Font("Calibri", Font.PLAIN, textArea.getFont().getSize()));
+            textPane.setFont(new Font("Calibri", Font.PLAIN, textPane.getFont().getSize()));
         }else if (e.getActionCommand().equals("Times New Roman")) {
-            textArea.setFont(new Font("Times New Roman", Font.PLAIN, textArea.getFont().getSize()));
+            textPane.setFont(new Font("Times New Roman", Font.PLAIN, textPane.getFont().getSize()));
         }else if (e.getActionCommand().equals("Arial")) {
-            textArea.setFont(new Font("Arial", Font.PLAIN, textArea.getFont().getSize()));
+            textPane.setFont(new Font("Arial", Font.PLAIN, textPane.getFont().getSize()));
         }else if (e.getActionCommand().equals("Bold")) {
-            Font currentFont = textArea.getFont();
+            Font currentFont = textPane.getFont();
             if (currentFont.isBold()) {
-                textArea.setFont(currentFont.deriveFont(currentFont.getStyle() & ~Font.BOLD));
+                textPane.setFont(currentFont.deriveFont(currentFont.getStyle() & ~Font.BOLD));
             } else {
-                textArea.setFont(currentFont.deriveFont(currentFont.getStyle() | Font.BOLD));
+                textPane.setFont(currentFont.deriveFont(currentFont.getStyle() | Font.BOLD));
             }
         }else if (e.getActionCommand().equals("Italic")) {
-           Font currentFont = textArea.getFont();
+           Font currentFont = textPane.getFont();
             if (currentFont.isItalic()) {
-                textArea.setFont(currentFont.deriveFont(currentFont.getStyle() & ~Font.ITALIC));
+                textPane.setFont(currentFont.deriveFont(currentFont.getStyle() & ~Font.ITALIC));
             } else {
-                textArea.setFont(currentFont.deriveFont(currentFont.getStyle() | Font.ITALIC));
+                textPane.setFont(currentFont.deriveFont(currentFont.getStyle() | Font.ITALIC));
             }
         }else if (e.getActionCommand().equals("10")) {
-        textArea.setFont(textArea.getFont().deriveFont(10f));
+        textPane.setFont(textPane.getFont().deriveFont(10f));
         } else if (e.getActionCommand().equals("12")) {
-            textArea.setFont(textArea.getFont().deriveFont(12f));
+            textPane.setFont(textPane.getFont().deriveFont(12f));
         } else if (e.getActionCommand().equals("14")) {
-            textArea.setFont(textArea.getFont().deriveFont(14f));
+            textPane.setFont(textPane.getFont().deriveFont(14f));
         } else if (e.getActionCommand().equals("16")) {
-            textArea.setFont(textArea.getFont().deriveFont(16f));
+            textPane.setFont(textPane.getFont().deriveFont(16f));
         } else if (e.getActionCommand().equals("18")) {
-            textArea.setFont(textArea.getFont().deriveFont(18f));
+            textPane.setFont(textPane.getFont().deriveFont(18f));
         } else if (e.getActionCommand().equals("20")) {
-            textArea.setFont(textArea.getFont().deriveFont(20f));
+            textPane.setFont(textPane.getFont().deriveFont(20f));
         }
-     }
-     
-     //Now to finally create the searchWord function which we refer to as a method in java//
-     private void searchWord() {
+    }
+
+    private void openFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()))) {
+                textPane.read(reader, null);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void saveFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileChooser.getSelectedFile()))) {
+                textPane.write(writer);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+    
+    // Save to cloud method
+    private void saveToCloud() {
+        String content = textPane.getText();
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement("INSERT INTO notes (content) VALUES (?)")) {
+            pstmt.setString(1, content);
+            pstmt.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Note saved to cloud!");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error saving note: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Load from cloud method
+    private void loadFromCloud() {
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement("SELECT content FROM notes ORDER BY id DESC LIMIT 1");
+             ResultSet rs = pstmt.executeQuery()) {
+        
+            System.out.println("Executing query..."); 
+            if (rs.next()) {
+                String content = rs.getString("content");
+                textPane.setText(content);
+                JOptionPane.showMessageDialog(this, "Note loaded from cloud!");
+            } else {
+                JOptionPane.showMessageDialog(this, "No notes found in the cloud.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error loading note: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+private void searchWord() {
 	    String searchTerm = searchField.getText().trim(); // Get the search term and trim whitespace
-	    String content = textArea.getText(); // Get the content from the text area
+	    String content = textPane.getText(); // Get the content from the text area
 	
 	    // Reset the search result label
 	    searchResultLabel.setText("");
@@ -327,13 +353,13 @@ setIconImage(jotterLogo.getImage());
     int index = 0;
 
     // Clear existing highlights
-    textArea.getHighlighter().removeAllHighlights();
+    textPane.getHighlighter().removeAllHighlights();
 
     // Search for the term in the text area content
     while ((index = content.indexOf(searchTerm, index)) >= 0) {
         try {
             // Highlight the found term
-            textArea.getHighlighter().addHighlight(index, index + searchTerm.length(), 
+            textPane.getHighlighter().addHighlight(index, index + searchTerm.length(), 
                new DefaultHighlighter.DefaultHighlightPainter(Color.BLUE));
         } catch (BadLocationException e) {
        }
@@ -345,20 +371,7 @@ setIconImage(jotterLogo.getImage());
     searchResultLabel.setText(count + " result(s) found for \"" + searchTerm + "\"");
 }
 
-
-     
-     
-     
-     
-     
-     
-     
-     
-    public static void main(String[] args) throws Exception {
-     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        new JotterApplication().setVisible(true);
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new JotterApplication().setVisible(true));
     }
-    
-
 }
-
