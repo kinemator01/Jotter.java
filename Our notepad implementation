@@ -29,8 +29,6 @@ public class JotterApplication extends JFrame implements ActionListener {
     JMenuItem openFile = new JMenuItem("Open");
     JMenuItem saveFile = new JMenuItem("Save");
     JMenuItem newWindow = new JMenuItem("New Window");
-    JMenuItem saveToCloud = new JMenuItem("Save to Cloud");
-    JMenuItem loadFromCloud = new JMenuItem("Load from Cloud");
     JMenuItem print = new JMenuItem("Print");
     JMenuItem exit = new JMenuItem("Exit");
 
@@ -67,11 +65,6 @@ public class JotterApplication extends JFrame implements ActionListener {
     JTextPane textPane = new JTextPane();
     JLabel statusBar = new JLabel("Words: 0 | Characters: 0");
     
-    // MySQL Database info
-    private final String DB_URL = "jdbc:mysql://localhost:3306/jotterapp?zeroDateTimeBehavior=CONVERT_TO_NULL";
-    private final String DB_USER = "root";
-    private final String DB_PASSWORD = "Khuphuka2004Bosvark";
-
     public JotterApplication() {
         setTitle("JOTTER");
         setBounds(100, 100, 800, 600);
@@ -89,8 +82,6 @@ public class JotterApplication extends JFrame implements ActionListener {
         file.add(newFile);
         file.add(openFile);
         file.add(saveFile);
-        file.add(saveToCloud);
-        file.add(loadFromCloud);
         file.add(newWindow);
         file.add(print);
         file.add(exit);
@@ -224,10 +215,6 @@ public class JotterApplication extends JFrame implements ActionListener {
             openFile();
         } else if (command.equalsIgnoreCase("Save")) {
             saveFile();
-        } else if (command.equalsIgnoreCase("Save to Cloud")) {
-            saveToCloud();
-        } else if (command.equalsIgnoreCase("Load from Cloud")) {
-            loadFromCloud();
         } else if (command.equalsIgnoreCase("New Window")) {
             new JotterApplication().setVisible(true);
         } else if (command.equalsIgnoreCase("Print")) {
@@ -307,38 +294,6 @@ public class JotterApplication extends JFrame implements ActionListener {
         }
     }
     
-    // Save to cloud method
-    private void saveToCloud() {
-        String content = textPane.getText();
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement("INSERT INTO notes (content) VALUES (?)")) {
-            pstmt.setString(1, content);
-            pstmt.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Note saved to cloud!");
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error saving note: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    // Load from cloud method
-    private void loadFromCloud() {
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement("SELECT content FROM notes ORDER BY id DESC LIMIT 1");
-             ResultSet rs = pstmt.executeQuery()) {
-        
-            System.out.println("Executing query..."); 
-            if (rs.next()) {
-                String content = rs.getString("content");
-                textPane.setText(content);
-                JOptionPane.showMessageDialog(this, "Note loaded from cloud!");
-            } else {
-                JOptionPane.showMessageDialog(this, "No notes found in the cloud.", "Info", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error loading note: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 private void searchWord() {
 	    String searchTerm = searchField.getText().trim(); // Get the search term and trim whitespace
 	    String content = textPane.getText(); // Get the content from the text area
