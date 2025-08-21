@@ -41,3 +41,5 @@ More export formats (PDF, DOCX)
 Spell checker
 
 Cloud sync so your notes are available everywhere ☁️ (we wanted to add this, but at the time we didn’t know much about databases)
+
+
