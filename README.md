@@ -1,47 +1,51 @@
-# 📝 Jotter — Lightweight Extensible Text Architecture
+# 📝 Jotter — Lightweight Desktop Text Editor
 
-Jotter is a highly modular, multi-window desktop text editor engineered using Java, designed to deliver high-performance document handling, custom rich-text manipulation, and inline multimedia insertion. Built with a focus on clean event scheduling and robust file serialization, Jotter serves as a lightweight alternative to traditional desktop word processors.
+Jotter is a clean, multi-window text editor built from scratch in Java. Think of it like a lightweight Notepad but upgraded with rich-text features, inline images, and a live search highlighting engine. 
 
 ![Java](https://img.shields.io/badge/Language-Java-red?style=flat-square)
 ![GUI](https://img.shields.io/badge/GUI-Swing%20%2F%20AWT-orange?style=flat-square)
-![Architecture](https://img.shields.io/badge/Pattern-MVC-blue?style=flat-square)
 
 ---
 
-## 🛠️ System Capabilities
+## ⚡ Core Features
 
-* **Advanced Document Control:** Implements atomic file operations including stream-based creation, disk serialization (Open/Save routines), printing integration, and native clipboard interfacing (Cut, Copy, Paste, Selection buffers).
-* **Dynamic Document Metrics:** Real-time character and word-token parse metrics computed passively via listener hooks on the primary text document and displayed via a stateful status bar.
-* **Multi-Instance Processing:** Built to support concurrent application execution paths, enabling users to spawn multiple independent text-editing windows running on separate threads.
-
----
-
-## 🚀 Key Engineering Contributions & Logic
-
-While this was a collaborative initiative at CPUT, my specific responsibilities focused on the architectural design of high-utility features, text parsing engines, and project branding:
-
-### 🔍 1. High-Performance Search & Token Highlighting Engine
-* **The Logic:** Developed an asynchronous document search routine that traverses the text model to identify keyword sub-strings.
-* **The Implementation:** Integrated a custom text-attribute highlighting engine. It computes string token indices using positional offsets and applies a background painter overlay to all concurrent matches without disrupting UI layout threads.
-
-### 🖼️ 2. Inline Multimedia Ingestion Pipeline
-* **The Logic:** Designed a system to process and embed external imagery directly within a text document canvas.
-* **The Implementation:** Managed file parsing routes to stream, read, and render external image dimensions inline, mapping spatial element wrappers inside the rich-text component boundaries.
-
-### 🎨 3. Corporate Visual Identity & Asset Generation
-* Generated the vector-based visual assets, desktop iconography, and structural branding systems representing the runtime environment.
+* **File Serialization:** Full control over file operations—built using robust read/write stream pipelines to safely open, save, and print documents.
+* **Live Document Metrics:** A dynamic status bar that parses text tokens in real-time to display character and word counts on the fly using listener hooks.
+* **Multi-Threading:** Built to handle multiple windows running at the same time on separate execution threads.
 
 ---
 
-## 🔬 Technology Stack & Core API Integrations
+## 🛠️ My Specific Contributions
 
-* **Language & Runtime:** Java SE (Standard Edition)
-* **UI Framework:** **Java Swing** — Utilized for component containment trees, customizable text components, and absolute layout designs.
-* **Event Handling & Graphics:** **Java AWT (Abstract Window Toolkit)** — Leveraged for window action tracking, coordinate tracking, layout triggers, and low-level component rendering pipelines.
-* **File Architecture:** **Java I/O System** — Engineered robust `File` handling, `FileReader`/`FileWriter` character streams, and high-performance buffered streams (`BufferedReader`/`BufferedWriter`) to safely execute disk read/write cycles.
+This was a group project at CPUT, but I owned the engineering behind these core modules:
+
+### 🔍 1. Search Panel & Token Highlighting Engine
+* **How it works:** Built a text-searching routine that scans the document model to find keyword matches.
+* **The Tech:** Calculated character offsets inside the text component to apply a background painter highlight overlay to all matches simultaneously without freezing the UI thread.
+
+### 🖼️ 2. Inline Image Ingestion Pipeline
+* **How it works:** Implemented a system that lets users drop images directly into the text field.
+* **The Tech:** Managed the input parsing logic to stream, read, and render external image files inline within the document's layout boundaries.
+
+### 🎨 3. UI Assets & Icon Design
+* Designed the vector graphics, desktop application icon, and overall branding system for Jotter.
 
 ---
 
-## 🛣️ System Architecture Roadmap
+## 💻 Tech Stack & Core APIs
 
-To scale the codebase into a enterprise-ready system architecture, the following engineering sprints are mapped out for subsequent versions:
+* **Language:** Java SE
+* **GUI Layer:** **Java Swing** — Used for the main component window tree, layout managers, and custom text areas.
+* **Event Handling:** **Java AWT (Abstract Window Toolkit)** — Handled low-level graphics rendering, click events, and window state changes.
+* **File I/O:** **Java I/O Package** — Implemented `FileReader`, `FileWriter`, and high-performance `BufferedReader`/`BufferedWriter` streams for seamless disk access.
+
+---
+
+## 🚀 Future Roadmap
+
+Here’s the game plan to take this project from a local desktop app to an enterprise system:
+
+1. **Modernize the UI:** Migrate the legacy Swing layout over to a hardware-accelerated **JavaFX** setup for cleaner CSS styling and fluid animations.
+2. **Upgrade the Search Engine:** Turn the keyword finder into a full regular expression (**RegEx**) search-and-replace pipeline.
+3. **Complex Export Formats:** Build document parsers to export raw text files straight into formatted PDF or `.docx` formats.
+4. **Cloud Sync & Persistence Engine:** Replace the local file fallback with an embedded **SQLite database caching layer** paired with a cloud backend for cross-device synchronization.
