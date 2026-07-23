@@ -39,13 +39,4 @@ This was a group project at CPUT, but I owned the engineering behind these core 
 * **Event Handling:** **Java AWT (Abstract Window Toolkit)** — Handled low-level graphics rendering, click events, and window state changes.
 * **File I/O:** **Java I/O Package** — Implemented `FileReader`, `FileWriter`, and high-performance `BufferedReader`/`BufferedWriter` streams for seamless disk access.
 
----
 
-## 🚀 Future Roadmap
-
-Here’s the game plan to take this project from a local desktop app to an enterprise system:
-
-1. **Modernize the UI:** Migrate the legacy Swing layout over to a hardware-accelerated **JavaFX** setup for cleaner CSS styling and fluid animations.
-2. **Upgrade the Search Engine:** Turn the keyword finder into a full regular expression (**RegEx**) search-and-replace pipeline.
-3. **Complex Export Formats:** Build document parsers to export raw text files straight into formatted PDF or `.docx` formats.
-4. **Cloud Sync & Persistence Engine:** Replace the local file fallback with an embedded **SQLite database caching layer** paired with a cloud backend for cross-device synchronization.
